@@ -1,4 +1,4 @@
-# [DiSK_Distilling_Scaffolded_Knowledge](https://openreview.net/forum?id=N4K5ck-BTT)
+# [DiSK: Distilling Scaffolded Knowledge aka Scaffolding a Student to Instill Knowledge](https://openreview.net/forum?id=N4K5ck-BTT)
 
 We develop a novel KD scheme where the teacher scaffolds the student's prediction on hard-to-learn examples.  It smoothens student's loss landscape so that the student encounters fewer local minima. As a result it has good generalization properties.
 
