@@ -18,8 +18,7 @@ from copy import deepcopy
 from pathlib import Path
 
 
-from models import get_cifar_models, obtain_global_and_base_model
-from utils import get_model_infos, ECELoss
+from utils import get_model_infos
 from config_utils import load_config
 from log_utils import AverageMeter, ProgressMeter, time_string, convert_secs2time
 from starts import prepare_logger

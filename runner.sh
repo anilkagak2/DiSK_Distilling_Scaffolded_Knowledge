@@ -1,5 +1,8 @@
+GPU='0'
 
-GPU='3'
+dataset='cifar100'
+data_path='/home/anilkag/code/data/cifar/'
+pretrained_models_dir='/home/anilkag/code/github/Knowledge-Distillation-Pvt/gold_models'
 
 kt=3
 kg=3
@@ -9,6 +12,7 @@ init_epochs=5
 
 rt='b24_default'
 #rt='b23_default'
+
 aux=0.1
 nll=0.9
 kl=0.0
@@ -22,9 +26,9 @@ g_iters=250
 eval_batch_size=200
 batch_size=200
 use_alt_min=1
+
 b_add_sparsity_alt_min=0
 KD_temperature_t=4.0
-
 KD_temperature_s=4.0
 topK=10 
 max_ce=5.
@@ -41,15 +45,10 @@ budget_Ti=20
 
 ckpt='""'
 
-dataset='cifar100'
-data_path='./data/cifar/'
-
-base_config='./configs/C100-ResNet32FourPFiveM-NAS.config'
-global_config='./configs/C100-ResNet32.config'
-
 # 1159M MACs, 80.46%
 global_name='ResNet34' 
-global_ckpt='../gold_models/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar'
+global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
+#global_ckpt='../gold_models/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar'
 
 # 555M MACs, 76.56%
 #global_name='ResNet18' 
@@ -78,7 +77,7 @@ global_ckpt='../gold_models/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005
 
 # 4M MACs, 52.16%
 base_name="ResNet10_s"
-base_ckpt='../gold_models/disk-cifar100-ResNet10_s-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar'
+base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_s-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
 #ckpt='./gold_models/disk-hints10-cifar100-ResNet10_s-b24_default-ResNet10-1-23-0-41-0-1-model_best.pth.tar'
 
 # 16M MACs, 65.24%
@@ -102,13 +101,10 @@ KD_temperature_s=3.5
 budget_g_min=0.4
 budget_g_max=0.6
 
-
-echo "Hello strategy=$pst prob=$st routing=$rt l_aux=$aux l_kl=$kl oracle=$oracle tau=$oracle lm=$lm"
 echo "T=$global_name, S=$base_name"
 CUDA_VISIBLE_DEVICES="$GPU"  python train_DiSK.py --dataset $dataset --data_path $data_path \
-      	--model_config  $base_config  --model_name $base_name  \
+      	--model_name $base_name  --global_model_name $global_name  \
 	--model_ckpt $base_ckpt \
-	--global_model_config $global_config --global_model_name $global_name  \
 	--global_model_ckpt $global_ckpt  --eval_batch_size $eval_batch_size --batch_size $batch_size  \
 	--s_iters $s_iters --g_iters $g_iters --strategy 1 --s_lr 0.1 --g_lr 0.1 --g_lr_init 0.1 --kt $kt --kg $kg \
         --routing_opt_type "sgd" --base_opt_type "sgd"  --eps 1. \

@@ -21,6 +21,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+from models import get_instant_weight_model
 from model_dict import get_model_from_name
 from utils import get_model_infos
 from log_utils import AverageMeter, time_string, convert_secs2time
@@ -108,6 +109,7 @@ def main(args):
         #routingNet.load_state_dict( state['routing_state_dict'] )
 
     flop, param = get_model_infos(global_model, xshape)
+    args.global_flops = flop 
     logger.log("model information : {:}".format(global_model.get_message()))
     logger.log("-" * 50)
     logger.log(
@@ -117,6 +119,7 @@ def main(args):
     )
 
     flop, param = get_model_infos(base_model, xshape)
+    args.base_flops = flop 
     logger.log("model information : {:}".format(base_model.get_message()))
     logger.log("-" * 50)
     logger.log(
@@ -237,18 +240,8 @@ if __name__ == "__main__":
         help="The path to the global model configuration"
     )
     parser.add_argument(
-        "--global_model_config", type=str, 
-        default='./configs/C010-ResNet32.config',
-        help="The path to the global model configuration"
-    )
-    parser.add_argument(
         "--model_name", type=str, 
         default='ResNet32TwoPFiveM-NAS',
-        help="The path to the model configuration"
-    )
-    parser.add_argument(
-        "--model_config", type=str, 
-        default='./configs/C010-ResNet32TwoPFiveM-NAS.config',
         help="The path to the model configuration"
     )
     parser.add_argument("--procedure", type=str, 
