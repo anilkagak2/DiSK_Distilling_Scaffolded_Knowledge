@@ -1,4 +1,4 @@
-GPU='3'
+GPU='1'
 
 dataset='cifar100'
 data_path='/home/anilkag/code/data/cifar/'
@@ -10,6 +10,8 @@ epochs=200
 alt_epochs=40
 init_epochs=5
 
+#rt='b26_default'
+#rt='b25_default'
 rt='b24_default'
 #rt='b23_default'
 
@@ -46,8 +48,8 @@ budget_Ti=20
 ckpt='""'
 
 # 1159M MACs, 80.46%
-global_name='ResNet34' 
-global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
+#global_name='ResNet34' 
+#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
 
 # 555M MACs, 76.56%
 #global_name='ResNet18' 
@@ -58,8 +60,8 @@ global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-
 #global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10-0-0-0-1-0.1-0.1-sgd-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
 
 # 64M MACs, 71.99%
-#global_name='ResNet10_l'
-#global_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_l-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
+global_name='ResNet10_l'
+global_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_l-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
 
 
 # 0.8M MACs, 28.21%

@@ -488,27 +488,38 @@ class MobileNetV2(nn.Module):
         return out
 
 
-
-class B24_Inst_RoutingNetworkD(nn.Module):
-    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10, C=5, negative=False):
-        print('---------------------------------- B24 (teacher_logits) --')
+class B26_Inst_RoutingNetworkD(nn.Module):
+    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10):
+        print('---------------------------------- B26 (student_ft + teacher_ft) --')
         print(' t_conv_ft, t_ft ', num_t_conv_ft, num_t_ft)
         print(' s_conv_ft, s_ft ', num_s_conv_ft, num_s_ft)
-        super(B24_Inst_RoutingNetworkD, self).__init__()
+        super(B26_Inst_RoutingNetworkD, self).__init__()
 
         self.flatten = nn.Flatten()
         self.n_labels = n_labels
-        self.C = C 
         n_ft = 64
-
-        #print( 'n_t_conv_ft = ', num_t_conv_ft )
         n_convs = 256
 
-        #self.linear = nn.Linear(num_t_ft + num_s_ft, n_labels)
-        #self.linear = nn.Linear(num_t_ft , n_labels)
+        self.s_ft_convs = nn.Sequential(
+            nn.Conv2d(num_s_conv_ft, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
 
-        self.ft_convs = nn.Sequential(
+            nn.Conv2d(n_convs, n_convs, 3, 1, 1, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
 
+            nn.Conv2d(n_convs, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.AdaptiveAvgPool2d((1, 1)),
+            nn.Flatten(),
+
+            nn.Linear(n_convs, num_s_ft, bias=True),
+        )
+
+        self.t_ft_convs = nn.Sequential(
             nn.Conv2d(num_t_conv_ft, n_convs, 1, 1, 0, bias=False),
             nn.BatchNorm2d(n_convs),
             nn.SiLU(),
@@ -521,29 +532,116 @@ class B24_Inst_RoutingNetworkD(nn.Module):
             nn.BatchNorm2d(n_convs),
             nn.SiLU(),
 
-            #nn.AdaptiveMaxPool2d((1, 1)),
-            #nn.ReLU6(inplace=True),
             nn.AdaptiveAvgPool2d((1, 1)),
             nn.Flatten(),
 
             nn.Linear(n_convs, num_t_ft, bias=True),
         )
 
-
-
-        self.linear = nn.Sequential(
-                nn.Linear(num_t_ft , n_ft, bias=True),
-                #nn.Linear(num_t_ft + num_s_ft, n_ft, bias=True),
-                nn.BatchNorm1d( n_ft ),
-                nn.SiLU(),
-                nn.Linear(n_ft, n_labels), # bias=True),
-                #nn.Linear(2*n_ft, 1), # bias=True),
+        self.routing = nn.Sequential(
+                nn.Linear(num_t_ft + num_s_ft, n_labels, bias=True),
+                nn.BatchNorm1d( n_labels ),
+                nn.ReLU(),
+                nn.Linear(n_labels, 1), # bias=True),
+                nn.Sigmoid(),
             )
 
+        for m in [self.routing]:
+            m.apply(init_weights)
 
+    def forward(self, s_ft, s_logits, t_ft, t_logits, y_one_hot, s_all_ft=None, t_all_ft=None):
+        _logits = t_logits
+
+        t_ft = self.t_ft_convs( t_all_ft[-1] )
+        s_ft = self.s_ft_convs( s_all_ft[-1].detach() )
+        clf_ft = torch.cat( [t_ft, s_ft], dim=1 )
+        gate = self.routing( clf_ft )
+        return gate, _logits 
+
+
+class B25_Inst_RoutingNetworkD(nn.Module):
+    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10):
+        print('---------------------------------- B25 (student_ft) --')
+        print(' t_conv_ft, t_ft ', num_t_conv_ft, num_t_ft)
+        print(' s_conv_ft, s_ft ', num_s_conv_ft, num_s_ft)
+        super(B25_Inst_RoutingNetworkD, self).__init__()
+
+        self.flatten = nn.Flatten()
+        self.n_labels = n_labels
+        n_ft = 64
+        n_convs = 256
+
+        self.ft_convs = nn.Sequential(
+            nn.Conv2d(num_s_conv_ft, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.Conv2d(n_convs, n_convs, 3, 1, 1, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.Conv2d(n_convs, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.AdaptiveAvgPool2d((1, 1)),
+            nn.Flatten(),
+
+            nn.Linear(n_convs, num_s_ft, bias=True),
+        )
 
         self.routing = nn.Sequential(
-                #nn.Linear(num_t_ft + num_s_ft, n_labels, bias=True),
+                nn.Linear(num_s_ft, n_labels, bias=True),
+                nn.BatchNorm1d( n_labels ),
+                nn.ReLU(),
+                nn.Linear(n_labels, 1), # bias=True),
+                nn.Sigmoid(),
+            )
+
+        for m in [self.routing]:
+            m.apply(init_weights)
+
+    def forward(self, s_ft, s_logits, t_ft, t_logits, y_one_hot, s_all_ft=None, t_all_ft=None):
+        _logits = t_logits
+
+        clf_ft = self.ft_convs( s_all_ft[-1].detach() )
+        gate = self.routing( clf_ft )
+        return gate, _logits 
+
+
+
+class B24_Inst_RoutingNetworkD(nn.Module):
+    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10):
+        print('---------------------------------- B24 (teacher_logits) --')
+        print(' t_conv_ft, t_ft ', num_t_conv_ft, num_t_ft)
+        print(' s_conv_ft, s_ft ', num_s_conv_ft, num_s_ft)
+        super(B24_Inst_RoutingNetworkD, self).__init__()
+
+        self.flatten = nn.Flatten()
+        self.n_labels = n_labels
+        n_ft = 64
+        n_convs = 256
+
+        self.ft_convs = nn.Sequential(
+            nn.Conv2d(num_t_conv_ft, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.Conv2d(n_convs, n_convs, 3, 1, 1, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.Conv2d(n_convs, n_convs, 1, 1, 0, bias=False),
+            nn.BatchNorm2d(n_convs),
+            nn.SiLU(),
+
+            nn.AdaptiveAvgPool2d((1, 1)),
+            nn.Flatten(),
+
+            nn.Linear(n_convs, num_t_ft, bias=True),
+        )
+
+        self.routing = nn.Sequential(
                 nn.Linear(num_t_ft, n_labels, bias=True),
                 nn.BatchNorm1d( n_labels ),
                 nn.ReLU(),
@@ -551,45 +649,19 @@ class B24_Inst_RoutingNetworkD(nn.Module):
                 nn.Sigmoid(),
             )
 
-        for m in [self.linear, self.routing]:
+        for m in [self.routing]:
             m.apply(init_weights)
 
     def forward(self, s_ft, s_logits, t_ft, t_logits, y_one_hot, s_all_ft=None, t_all_ft=None):
-        logits = t_logits
+        _logits = t_logits
 
-        #print( 't_ft[-1] = ', t_all_ft[-1].size() )
-
-        new_t_ft = self.ft_convs( t_all_ft[-1] )
-        t_ft = new_t_ft
-
-        s_ft = s_ft.detach()
-        #print('logits = ', logits.size())
-        #out = F.relu(self.s_bn(self.s_conv(s_ftout)))
-        #out = F.avg_pool2d(out, 4)
-
-        #clf_ft = t_ft #torch.cat([ _t_ft, _s_ft ], dim=1)
-        #clf_ft = torch.cat([ t_ft, s_ft ], dim=1)
-        clf_ft = t_ft
-
-        #_logits = self.linear( self.flatten(_t_ft) )
-        _logits = None #self.linear( clf_ft )
-        #_logits = torch.zeros_like( t_logits ) + _logits
-
+        clf_ft = self.ft_convs( t_all_ft[-1] )
         gate = self.routing( clf_ft )
-        #print('_logits = ', _logits.size())
-        #print('gate = ', gate.size(), ' -- ', gate[0])
-        #gate = torch.zeros_like( t_logits ) + gate
-        #print('gate = ', gate.size(), ' -- ', gate[0])
-        #assert(1==2)
-
         return gate, _logits 
 
 
-
-
-
 class B23_Inst_RoutingNetworkD(nn.Module):
-    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10, C=5, negative=False):
+    def __init__(self, num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, n_labels=10):
         print('---------------------------------- B23 (teacher_logits) --')
         print(' t_conv_ft, t_ft ', num_t_conv_ft, num_t_ft)
         print(' s_conv_ft, s_ft ', num_s_conv_ft, num_s_ft)
@@ -597,7 +669,6 @@ class B23_Inst_RoutingNetworkD(nn.Module):
 
         self.flatten = nn.Flatten()
         self.n_labels = n_labels
-        self.C = C 
         n_ft = 64
 
         self.routing = nn.Sequential(
@@ -618,16 +689,19 @@ class B23_Inst_RoutingNetworkD(nn.Module):
         _logits = t_logits
 
         clf_ft = t_ft 
-
         gate = self.routing( clf_ft )
         return gate, _logits 
 
 
-def get_instant_weight_model( num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, routing_name = 'default', n_labels=10, C=5, negative=False):
+def get_instant_weight_model( num_s_ft, num_t_ft, num_s_conv_ft=10, num_t_conv_ft=10, routing_name = 'default', n_labels=10):
     if routing_name=='b23_default':
-        routingNet = B23_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels, C=C, negative=negative)
+        routingNet = B23_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels)
     elif routing_name=='b24_default':
-        routingNet = B24_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels, C=C, negative=negative)
+        routingNet = B24_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels)
+    elif routing_name=='b25_default':
+        routingNet = B25_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels)
+    elif routing_name=='b26_default':
+        routingNet = B26_Inst_RoutingNetworkD( num_s_ft=num_s_ft, num_t_ft=num_t_ft, num_s_conv_ft=num_s_conv_ft, num_t_conv_ft=num_t_conv_ft, n_labels=n_labels)
     else:   
         assert(1==2) 
     routingNet = routingNet.cuda()
