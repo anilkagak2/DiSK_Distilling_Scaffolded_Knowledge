@@ -33,6 +33,8 @@ pip install pyyaml
 
 Our DiSK.py file contains the core utilities including the proposed scaffolded distillation logic. You can run the CIFAR-100 and Tiny-ImageNet experiments using the runner.sh file by updating the student and teacher networks as well as their pre-trained models. For ImageNet experiments, follow the runner.sh file in the imagenet folder. 
 
+We provide access to the cross-entropy pre-trained teacher and student models in the [google drive link](https://drive.google.com/drive/folders/1ZDJTXiPAzKOMd8n9wsHCS2-PQWHTbouS?usp=share_link). Please download the required models in your local directory and provide this directory location in the ```runner.sh``` script.
+
 ```
 bash runner.sh
 ```
