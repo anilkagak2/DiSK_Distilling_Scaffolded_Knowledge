@@ -1,8 +1,9 @@
-GPU='1'
+GPU='0'
 
 dataset='cifar100'
 data_path='/home/anilkag/code/data/cifar/'
-pretrained_models_dir='/home/anilkag/code/github/Knowledge-Distillation-Pvt/gold_models'
+#pretrained_models_dir='/home/anilkag/code/github/Knowledge-Distillation-Pvt/gold_models'
+pretrained_models_dir='/home/anilkag/code/github/DiSK_Distilling_Scaffolded_Knowledge/pretrained-models/'
 
 kt=3
 kg=3
@@ -49,40 +50,40 @@ ckpt='""'
 
 # 1159M MACs, 80.46%
 #global_name='ResNet34' 
-#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-0-0-0-1-0.1-0.1-sgd-0.0005-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
+#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet34-model_best.pth.tar"
 
 # 555M MACs, 76.56%
 #global_name='ResNet18' 
-#global_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet18-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
+#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet18-model_best.pth.tar"
 
 # 253M MACs, 75.25%
 #global_name='ResNet10' 
-#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10-0-0-0-1-0.1-0.1-sgd-0.0-4.0-1.0-0.0-1-200-model_best.pth.tar"
+#global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10-model_best.pth.tar"
 
 # 64M MACs, 71.99%
 global_name='ResNet10_l'
-global_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_l-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
+global_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_l-model_best.pth.tar"
 
 
 # 0.8M MACs, 28.21%
 #base_name='ResNet10_xxxs'
-#base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_xxxs-b16_default-ResNet10_l-0-1-0-0-1-0-0-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.0-1-200-10-0-0-model_best.pth.tar"
+#base_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_xxxs-model_best.pth.tar"
 
 # 2M MACs, 32.05%
 #base_name='ResNet10_xxs'
-#base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_xxs-b16_default-ResNet10_l-0-1-0-0-1-0-0-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.0-1-200-10-0-0-model_best.pth.tar"
+#base_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_xxs-model_best.pth.tar"
 
 # 2.86M MACs, 42.99%
 #base_name="ResNet10_xs"
-#base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_xs-b16_default-ResNet10_s-0-1-0-0-1-0-0-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.0-1-200-10-0-0-model_best.pth.tar"
+#base_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_xs-model_best.pth.tar"
 
 # 4M MACs, 52.16%
 base_name="ResNet10_s"
-base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_s-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
+base_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_s-model_best.pth.tar"
 
 # 16M MACs, 65.24%
 #base_name='ResNet10_m'
-#base_ckpt="${pretrained_models_dir}/disk-cifar100-ResNet10_m-b16_default-ResNet10_s-0-1-0-0-1-0-2-0-250-250-0.1-0.1-sgd-sgd-hybrid_kd_inst-0.0-4.0-0.0-1.0-0.0-0.0-0.0-0.2-1-200-10-0-0-model_best.pth.tar"
+#base_ckpt="${pretrained_models_dir}/disk-CE-cifar100-ResNet10_m-model_best.pth.tar"
 #ckpt="${pretrained_models_dir}/disk-hints10-cifar100-ResNet10_m-b24_default-ResNet10_l-1-23-0-40-0-1-0-1-0.1-0.1-1e-05-sgd-sgd-hybrid_kd_inst-0.9-4.0-50-20-0.2_best_model.pth.tar"
 
 b_add_sparsity_alt_min=0
