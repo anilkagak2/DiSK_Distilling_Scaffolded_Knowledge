@@ -39,6 +39,15 @@ We provide access to the cross-entropy pre-trained teacher and student models in
 bash runner.sh
 ```
 
+In order to train cross-entropy based teacher/student models, simply update the model name in the ```runner_ce.sh``` script and run 
+```
+bash runner_ce.sh
+```
+
+Note that our scripts support CIFAR-100 and Tiny-ImageNet datasets out of the box. ImageNet experiments are separated in the sub-directory as they rely on ```timm``` repository for providing definitions of wide-range of vision architectures as well as distributed training on multiple gpus. 
+
+You can extend this code to your custom dataset by hacking various definitions in the dataset and model definition folders, and adding access points in the model dictionary.
+
 ## Reference (Bibtex entry)
 
 
