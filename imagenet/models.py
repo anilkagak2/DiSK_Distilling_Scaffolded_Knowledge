@@ -12,17 +12,22 @@ class TimmModel(nn.Module):
         self.model = model
         self.model_name = model_name
 
-        if 'efficient' in model_name or 'resnet' in model_name:
+        if 'resnetv2' in model_name:
+            self.global_pool = nn.Identity()
+            model.drop_rate = 0.
+        elif 'efficient' in model_name or 'resnet' in model_name:
             self.global_pool = model.global_pool
-        elif 'vit_' in model_name:
+        elif ('vit_' in model_name) or ('deit_' in model_name):
             self.global_pool = nn.Identity()
             model.drop_rate = 0.
         else:
             self.global_pool = model.flatten
 
-        if 'resnet' in model_name:
+        if 'resnetv2' in model_name:
+            self.classifier = model.head
+        elif 'resnet' in model_name:
             self.classifier = model.fc
-        elif 'vit_' in model_name:
+        elif ('vit_' in model_name) or ('deit_' in model_name):
             self.classifier = model.head
         else:
             self.classifier = model.classifier
