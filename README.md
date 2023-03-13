@@ -6,6 +6,14 @@ We develop a novel KD scheme where the teacher scaffolds the student's predictio
 
 ![](<pdf/PDE-GlobalLayer-Poster.png>)
 
+### ImageNet Results
+
+| **Student**               | **Teacher**               | **Cross-Entropy** | **Existing  Distillation Literature** | **DiSK** |
+|---------------------------|---------------------------|-------------------|---------------------------------------|----------|
+| ResNet18                  | ResNet50                  | 69.73             | 71.29                                 | 72.35    |
+| ViT-Tiny (Patch 16, 224)  | ViT-Large (Patch 16, 384) | 75.45             |                                       | 77.86    |
+| DeiT-Tiny (Patch 16, 224) | ViT-Large (Patch 16, 384) | 72.2              | 74.5                                  | 74.86    |
+
 
 ## Installation
 
