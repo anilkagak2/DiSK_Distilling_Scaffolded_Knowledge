@@ -12,7 +12,7 @@ We develop a novel KD scheme where the teacher scaffolds the student's predictio
 |---------------------------|---------------------------|-------------------|---------------------------------------|----------|
 | ResNet18                  | ResNet50                  | [69.73](https://github.com/huggingface/pytorch-image-models/blob/v0.5.4/results/results-imagenet.csv)             | 71.29                                 | 72.35    |
 | ViT-Tiny (Patch 16, 224)  | ViT-Large (Patch 16, 384) | [75.45](https://github.com/huggingface/pytorch-image-models/blob/v0.5.4/results/results-imagenet.csv)             |                                       | 77.86    |
-| DeiT-Tiny (Patch 16, 224) | ViT-Large (Patch 16, 384) | [72.2](https://github.com/facebookresearch/deit/blob/main/README_deit.md)              | [74.5](https://github.com/facebookresearch/deit/blob/main/README_deit.md)                                  | 74.86    |
+| DeiT-Tiny (Patch 16, 224) | ViT-Large (Patch 16, 384) | [72.2](https://github.com/facebookresearch/deit/blob/main/README_deit.md)              | [74.5](https://github.com/facebookresearch/deit/blob/main/README_deit.md)                                  | 75.01    |
 
 
 ## Installation
