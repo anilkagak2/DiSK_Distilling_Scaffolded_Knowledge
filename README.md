@@ -4,7 +4,7 @@ We develop a novel KD scheme where the teacher scaffolds the student's predictio
 
 ## Brief Description  
 
-![](<pdf/PDE-GlobalLayer-Poster.png>)
+![](<DiSK-Poster.png>)
 
 ### ImageNet Results
 
