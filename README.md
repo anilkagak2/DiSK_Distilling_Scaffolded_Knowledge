@@ -6,6 +6,8 @@ We develop a novel KD scheme where the teacher scaffolds the student's predictio
 
 ![](<DiSK-Poster.png>)
 
+[Watch the Video Here](https://youtu.be/b1KKfraK3OY)
+
 ### ImageNet Results
 
 | **Student**               | **Teacher**               | **Cross-Entropy** | **Existing  Distillation Literature** | **DiSK** |
